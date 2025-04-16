@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+    @apply antialiased text-neutral-900 bg-white;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply m-0 p-0 min-h-screen;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv03";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :root {
+    --gradient-primary: rgba(86, 87, 246, 0.3);
+    --gradient-secondary: rgba(152, 129, 252, 0.2);
+    --gradient-tertiary: rgba(47, 162, 224, 0.1);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Satoshi', sans-serif;
+    @apply font-bold tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl sm:text-5xl md:text-6xl;
+  }
+  
+  h2 {
+    @apply text-3xl sm:text-4xl md:text-5xl;
+  }
+  
+  h3 {
+    @apply text-2xl sm:text-3xl;
+  }
+  
+  h4 {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .card {
+    @apply rounded-2xl bg-white border border-neutral-200 shadow-soft;
+  }
+  
+  .animate-in {
+    animation: animateIn 0.3s ease forwards;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500;
+  }
+  
+  .btn-outline {
+    @apply btn border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 focus:ring-primary-500;
+  }
+  
+  .btn-ghost {
+    @apply btn bg-transparent text-neutral-700 hover:bg-neutral-100 focus:ring-primary-500;
+  }
+  
+  .input {
+    @apply block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+  
+  .label {
+    @apply block text-sm font-medium text-neutral-700;
+  }
+  
+  .select {
+    @apply block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+  
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-0.5 text-sm font-medium;
+  }
+  
+  .badge-green {
+    @apply badge bg-green-100 text-green-800;
+  }
+  
+  .badge-red {
+    @apply badge bg-red-100 text-red-800;
+  }
+  
+  .badge-blue {
+    @apply badge bg-blue-100 text-blue-800;
+  }
+  
+  .badge-purple {
+    @apply badge bg-purple-100 text-purple-800;
+  }
+}
+
+/* Calendar custom styles */
+.fc {
+  @apply font-sans;
+}
+
+.fc .fc-toolbar-title {
+  @apply text-xl md:text-2xl font-display font-bold;
+}
+
+.fc .fc-button {
+  @apply rounded-lg font-medium border-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+}
+
+.fc .fc-button-primary {
+  @apply bg-primary-600 hover:bg-primary-700 text-white;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  @apply bg-primary-800;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+  @apply border-neutral-200 rounded-xl overflow-hidden;
+}
+
+.fc-theme-standard td, 
+.fc-theme-standard th {
+  @apply border-neutral-200;
+}
+
+.fc .fc-daygrid-day-number {
+  @apply text-sm font-medium text-neutral-700;
+}
+
+.fc .fc-col-header-cell-cushion {
+  @apply font-medium text-neutral-500 py-3;
+}
+
+.fc .fc-event {
+  @apply rounded-lg border-none shadow-sm cursor-pointer transition-transform duration-100 transform hover:scale-[1.02];
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  @apply bg-primary-50;
+}
+
+/* Animation keyframes */
+@keyframes animateIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-neutral-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-300 rounded-full hover:bg-neutral-400;
+}
