@@ -9,13 +9,13 @@ interface PremiumCardProps {
   borderColor?: string;
   hoverScale?: number;
   hoverY?: number;
-}
+} 
 
 export const PremiumCard: React.FC<PremiumCardProps> = ({
   children,
   className,
   glowColor = "rgba(86, 87, 246, 0.15)",
-  borderColor = "#232329",
+  // borderColor = "#232329",
   hoverScale = 1.02,
   hoverY = -8,
 }) => {

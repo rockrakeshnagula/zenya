@@ -1,5 +1,5 @@
 import { Service, Booking, User } from '../types';
-import { addDays, addHours, addMinutes, format, startOfDay, setHours, setMinutes } from 'date-fns';
+import { addDays, addMinutes, format, startOfDay, setHours, setMinutes } from 'date-fns';
 
 // Services
 export const services: Service[] = [
@@ -9,7 +9,7 @@ export const services: Service[] = [
     description: 'One-on-one consultation with our expert advisor.',
     duration: 60,
     price: 150,
-    category: 'Consultation',
+    category: 'Consultation', 
     color: '#4f46e5', // indigo-600
   },
   {

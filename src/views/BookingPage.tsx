@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../components/common/Button';
-import Input from '../components/common/Input';
 import { useBooking } from '../context/BookingContext';
 import { PremiumCard } from '../components/ui/PremiumCard';
 import { cn } from '../utils/cn';
@@ -16,9 +15,7 @@ import {
   subMonths, 
   isToday, 
   addDays,
-  isAfter,
-  parseISO,
-  set
+  isAfter
 } from 'date-fns';
 
 const BookingPage: React.FC = () => {
@@ -438,7 +435,7 @@ const BookingPage: React.FC = () => {
                             const isSelected = selectedDate && isSameDay(day, selectedDate);
                             const isCurrentMonth = isSameMonth(day, currentMonth);
                             const isAvailable = hasAvailableSlots(day);
-                            const isSelectable = isDateSelectable(day);
+                            // const isSelectable = isDateSelectable(day);
                             
                             return (
                               <motion.div 
@@ -490,7 +487,7 @@ const BookingPage: React.FC = () => {
                           </h3>
                           
                           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                            {availableTimes.map((time, index) => (
+                            {availableTimes.map((time) => (
                               <motion.div
                                 key={time}
                                 whileHover={{ y: -2 }}

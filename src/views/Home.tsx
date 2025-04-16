@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import Card from '../components/common/Card';
+import { motion, useScroll, useTransform, } from 'framer-motion';
+// import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import { useBooking } from '../context/BookingContext';
 import { useHeader } from '../context/HeaderContext';
 import { IsometricContainer, FloatingOverlayElement, FloatingUIElement } from '../components/ui/IsometricContainer';
-import { BackgroundGradient } from '../components/ui/BackgroundGradient';
+// import { BackgroundGradient } from '../components/ui/BackgroundGradient';
 import { PremiumCard, ServiceCard } from '../components/ui/PremiumCard';
-import { cn } from '../utils/cn';
+// import { cn } from '../utils/cn';
 
 const Home: React.FC = () => {
   const { services } = useBooking();
@@ -60,17 +60,17 @@ const Home: React.FC = () => {
   // Parallax values for hero section
   const heroY = useTransform(scrollYProgress, [0, 0.5], ['0%', '50%']);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
-  const blurStrength = useTransform(scrollYProgress, [0, 0.25], [0, 20]);
+  // const blurStrength = useTransform(scrollYProgress, [0, 0.25], [0, 20]);
   
   // Subtle float animation for decorative elements
-  const floatAnimation = {
-    y: [0, -10, 0],
-    transition: { 
-      duration: 6,
-      repeat: Infinity, 
-      ease: "easeInOut" 
-    }
-  };
+  // const floatAnimation = {
+  //   y: [0, -10, 0],
+  //   transition: { 
+  //     duration: 6,
+  //     repeat: Infinity, 
+  //     ease: "easeInOut" 
+  //   }
+  // };
 
   return (
     <div className="relative bg-[#0A0A0B] text-white overflow-hidden">
@@ -809,7 +809,7 @@ const Home: React.FC = () => {
             >
               All Services
             </motion.button>
-            {["Consultation", "Coaching", "Wellness", "Strategy"].map((category, idx) => (
+            {["Consultation", "Coaching", "Wellness", "Strategy"].map((category) => (
               <motion.button 
                 key={category}
                 className="px-4 py-2 bg-[#151518] text-[#a3a3a3] rounded-md text-xs font-medium border border-[#232329]"

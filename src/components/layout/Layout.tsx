@@ -1,5 +1,5 @@
 import React, { ReactNode, useState, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { motion, AnimatePresence, } from 'framer-motion';
 import { useHeader } from '../../context/HeaderContext';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/cn';
@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
-  const { scrollY } = useScroll();
+  // const { scrollY } = useScroll();
   
   // Toggle mobile menu
   const toggleMobileMenu = () => {
@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 { label: 'Calendar', href: '/calendar' },
                 { label: 'Dashboard', href: '/dashboard' },
               ].map((item) => (
-                <Link
+                <Link 
                   key={item.label}
                   to={item.href}
                   className={cn(

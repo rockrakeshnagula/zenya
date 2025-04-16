@@ -1,4 +1,4 @@
-import React, { ReactNode, forwardRef } from 'react';
+import { ReactNode, forwardRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { cn } from '../../utils/cn';
 
@@ -9,7 +9,7 @@ interface LayerTransitionProps {
   offset?: number;
   zIndex?: number;
   translateY?: number;
-  scrollOpacityRange?: [number, number];
+  scrollOpacityRange?: [number, number]; 
   scrollYRange?: [number, number];
   bgColor?: string;
 }
@@ -91,8 +91,8 @@ export const StickyLayerSection = forwardRef<HTMLElement, {
   children,
   className,
   zIndex = 10,
-  start = 'top top',
-  end = '100% top',
+  // start = 'top top',
+  // end = '100% top',
 }, ref) => {
   return (
     <motion.section

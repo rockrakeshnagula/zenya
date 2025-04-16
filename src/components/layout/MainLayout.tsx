@@ -1,10 +1,10 @@
-import React from 'react';
+// import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames';
 
 const MainLayout = () => {
-  const navLinks = [
+  const navLinks = [ 
     { name: 'Home', path: '/' },
     { name: 'Book Now', path: '/booking' },
     { name: 'Calendar', path: '/calendar' },

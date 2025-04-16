@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useHeader } from '../../context/HeaderContext';
 import { cn } from '../../utils/cn';
 
@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   const { isTransparent } = useHeader();
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
-  const { scrollY } = useScroll();
+  // const { scrollY } = useScroll();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Handle scroll behavior
@@ -102,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                 className="h-6 w-6" 
                 fill="none" 
                 viewBox="0 0 24 24" 
-                stroke="currentColor"
+                stroke="currentColor" 
               >
                 {isMobileMenuOpen ? (
                   <path 

@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
-import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, } from 'framer-motion';
 import { cn } from '../../utils/cn';
 
 interface IsometricContainerProps {
   children: ReactNode;
   className?: string;
   shadowOpacity?: number;
-  perspective?: number;
+  perspective?: number; 
   rotateX?: number;
   rotateY?: number;
   parallax?: boolean;
