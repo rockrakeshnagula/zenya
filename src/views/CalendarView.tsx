@@ -6,6 +6,7 @@ import { useBooking } from '../context/BookingContext';
 import { format } from 'date-fns';
 import { PremiumCard } from '../components/ui/PremiumCard';
 import { cn } from '../utils/cn';
+import { getBookings as getStorageBookings } from '../utils/storage';
 
 // FullCalendar imports
 import FullCalendar from '@fullcalendar/react';
@@ -15,12 +16,20 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 
 const CalendarView: React.FC = () => {
-  const { bookings } = useBooking();
+  const { bookings, loading } = useBooking();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [showEventModal, setShowEventModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const calendarRef = useRef<any>(null);
+  // const [calendarLoaded, setCalendarLoaded] = useState(false);
+  
+  // Set calendar as loaded when FullCalendar is ready and bookings are available
+  // useEffect(() => {
+  //   if (!loading && calendarRef.current) {
+  //     setCalendarLoaded(true);
+  //   }
+  // }, [loading, calendarRef.current]);
   
   // Linear-inspired subtle animation variants
   const containerVariants = {
@@ -46,7 +55,7 @@ const CalendarView: React.FC = () => {
     }
   };
 
-  // Format bookings for FullCalendar
+  // Format bookings for FullCalendar - only if we have bookings
   const events = bookings.map(booking => ({
     id: booking.id,
     title: booking.serviceName,
@@ -148,6 +157,70 @@ const CalendarView: React.FC = () => {
       </div>
     );
   };
+
+  // Loading state when bookings are being fetched
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center">
+        <div className="text-center">
+          <motion.div
+            animate={{ 
+              rotate: 360,
+              transition: { 
+                duration: 1.5, 
+                repeat: Infinity, 
+                ease: "linear" 
+              }
+            }}
+            className="mx-auto mb-4 w-16 h-16 rounded-full border-t-2 border-b-2 border-[#5657F6]"
+          />
+          <p className="text-white text-lg font-medium">Loading calendar...</p>
+        </div>
+      </div>
+    );
+  }
+
+  React.useEffect(() => {
+    // Direct fetch from localStorage
+    const directLoadBookings = () => {
+      try {
+        // Get bookings directly from localStorage
+        const storageBookings = getStorageBookings();
+        
+        // If we have bookings from storage but not from context, use them directly
+        if (storageBookings.length > 0 && bookings.length === 0) {
+          console.log("Direct load found bookings:", storageBookings.length);
+          
+          // Force a refresh of the calendar component
+          if (calendarRef.current) {
+            const api = calendarRef.current.getApi();
+            api.refetchEvents();
+            
+            // This is the key - directly provide events
+            api.addEventSource(storageBookings.map(booking => ({
+              id: booking.id,
+              title: booking.serviceName,
+              start: booking.start,
+              end: booking.end,
+              color: getStatusColor(booking.status)
+            })));
+          }
+        }
+      } catch (error) {
+        console.error("Error direct loading bookings:", error);
+      }
+    };
+    
+    // Call immediately
+    directLoadBookings();
+    
+    // Set a short timeout to try again after initial render
+    const timer = setTimeout(() => {
+      directLoadBookings();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [bookings.length]);
 
   return (
     <div className="min-h-screen bg-[#0A0A0B] text-white">
@@ -353,6 +426,7 @@ const CalendarView: React.FC = () => {
               <div className="h-[650px] mt-4 calendar-container">
                 <FullCalendar
                   ref={calendarRef}
+                  key={`calendar-${bookings.length}`} // Force remounting when bookings change
                   plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
                   initialView="dayGridMonth"
                   events={events}

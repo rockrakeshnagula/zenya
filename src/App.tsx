@@ -13,14 +13,18 @@ import CalendarView from './views/CalendarView';
 import Dashboard from './views/Dashboard';
 import NotFound from './views/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import { initializeLocalStorage } from './utils/storage';
+
+// Initialize localStorage with mock data
+initializeLocalStorage();
 
 function App() {
   return (
     <>
       <ToastProvider />
-      <BookingProvider>
-        <HeaderProvider>
-          <AuthProvider>
+      <HeaderProvider>
+        <AuthProvider>
+          <BookingProvider>
             <Layout>
               <Routes>
                 {/* Public Routes */}
@@ -49,9 +53,9 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
-          </AuthProvider>
-        </HeaderProvider>
-      </BookingProvider>
+          </BookingProvider>
+        </AuthProvider>
+      </HeaderProvider>
     </>
   );
 }

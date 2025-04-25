@@ -10,6 +10,7 @@ import {
   getServiceById as getServiceByIdFromStorage
 } from '../utils/storage';
 import { generateTimeSlots } from '../data/mockData';
+import { useAuth } from './AuthContext';
 
 interface BookingContextType {
   bookings: Booking[];
@@ -21,6 +22,7 @@ interface BookingContextType {
   cancelBooking: (bookingId: string) => void;
   getServiceById: (serviceId: string) => Service | undefined;
   getAvailableTimeSlots: (date: Date, serviceId: string) => TimeSlot[];
+  reloadData: () => void;
 }
 
 const BookingContext = React.createContext<BookingContextType | undefined>(undefined);
@@ -29,26 +31,29 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [bookings, setBookings] = React.useState<Booking[]>([]);
   const [services, setServices] = React.useState<Service[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const { isAuthenticated } = useAuth();
 
-  React.useEffect(() => {
-    // Load data from localStorage
-    const loadData = () => {
-      try {
-        const bookingsData = getBookings();
-        const servicesData = getServices();
-        
-        setBookings(bookingsData);
-        setServices(servicesData);
-      } catch (error) {
-        console.error('Error loading data:', error);
-        toast.error('Error loading booking data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+  // Function to load data from localStorage
+  const loadData = React.useCallback(() => {
+    try {
+      setLoading(true);
+      const bookingsData = getBookings();
+      const servicesData = getServices();
+      
+      setBookings(bookingsData);
+      setServices(servicesData);
+    } catch (error) {
+      console.error('Error loading data:', error);
+      toast.error('Error loading booking data');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Reload data when authentication state changes
+  React.useEffect(() => {
+    loadData();
+  }, [loadData, isAuthenticated]);
 
   const createBooking = (bookingData: Omit<Booking, 'id' | 'createdAt'>) => {
     try {
@@ -145,6 +150,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         cancelBooking,
         getServiceById: getServiceByIdFunction,
         getAvailableTimeSlots,
+        reloadData: loadData,
       }}
     >
       {children}
