@@ -1,8 +1,9 @@
 import React, { ReactNode, useState, useEffect } from 'react';
-import { motion, AnimatePresence, } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useHeader } from '../../context/HeaderContext';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/cn';
+import UserMenu from '../ui/UserMenu';
 
 interface LayoutProps {
   children: ReactNode;
@@ -14,7 +15,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
-  // const { scrollY } = useScroll();
   
   // Toggle mobile menu
   const toggleMobileMenu = () => {
@@ -86,21 +86,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               ))}
             </nav>
             
-            {/* CTA Button & Mobile Menu Toggle */}
-            <div className="flex items-center">
-              <Link to="/booking">
-                <motion.button
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="bg-[#5657F6] hover:bg-[#6E6EF7] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                >
-                  Book Now
-                </motion.button>
-              </Link>
+            {/* Auth Menu & CTA Button */}
+            <div className="flex items-center space-x-4">
+              {/* User Menu or Auth Buttons */}
+              <UserMenu />
               
               {/* Mobile menu button */}
               <button 
-                className="ml-4 md:hidden text-white"
+                className="md:hidden text-white"
                 onClick={toggleMobileMenu}
               >
                 <motion.div
@@ -149,6 +142,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   { label: 'Home', href: '/' },
                   { label: 'Calendar', href: '/calendar' },
                   { label: 'Dashboard', href: '/dashboard' },
+                  { label: 'Book Now', href: '/booking' },
                 ].map((item) => (
                   <Link
                     key={item.label}
@@ -162,6 +156,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {item.label}
                   </Link>
                 ))}
+                <Link
+                  to="/login"
+                  className="block text-[#5657F6] hover:text-[#6E6EF7] text-sm font-medium transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sign In / Register
+                </Link>
               </div>
             </motion.div>
           )}

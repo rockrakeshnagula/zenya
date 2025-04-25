@@ -1,9 +1,11 @@
-import React, { useState, } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../components/common/Button';
 import { useBooking } from '../context/BookingContext';
 import { PremiumCard } from '../components/ui/PremiumCard';
 import { cn } from '../utils/cn';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { 
   format, 
   startOfMonth, 
@@ -15,11 +17,13 @@ import {
   subMonths, 
   isToday, 
   addDays,
-  isAfter
+  isAfter,
+  addMinutes
 } from 'date-fns';
 
 const BookingPage: React.FC = () => {
-  const { services } = useBooking();
+  const navigate = useNavigate();
+  const { services, createBooking } = useBooking();
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<string | null>(null);
   
@@ -28,6 +32,17 @@ const BookingPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
+
+  // User details state
+  const [userDetails, setUserDetails] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    notes: ''
+  });
+
+  // Loading state for submission
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Linear-inspired subtle animation variants
   const containerVariants = {
@@ -87,6 +102,15 @@ const BookingPage: React.FC = () => {
     setSelectedTime(time);
   };
 
+  // Handle user details input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setUserDetails(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   // Function to generate time slots
   const generateTimeSlots = (date: Date): string[] => {
     // Mock time slots - in a real app, these would come from your backend
@@ -143,6 +167,65 @@ const BookingPage: React.FC = () => {
     // This would normally check with your backend
     // For the demo, allow booking on any date that's not a Sunday (day 0)
     return date.getDay() !== 0 && isDateSelectable(date);
+  };
+
+  // Handle booking confirmation
+  const handleConfirmBooking = () => {
+    if (!selectedService || !selectedDate || !selectedTime) {
+      toast.error("Missing booking information");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Find the selected service
+      const service = services.find(s => s.id === selectedService);
+      if (!service) {
+        throw new Error("Service not found");
+      }
+
+      // Parse the selected time
+      const [hours, minutes] = selectedTime.includes('PM') 
+        ? [parseInt(selectedTime.split(':')[0]) + 12, parseInt(selectedTime.split(':')[1])]
+        : [parseInt(selectedTime.split(':')[0]), parseInt(selectedTime.split(':')[1])];
+      
+      const startTime = new Date(selectedDate);
+      startTime.setHours(hours, minutes, 0, 0);
+      
+      // Create end time based on service duration
+      const endTime = addMinutes(startTime, service.duration);
+
+      // Create booking object
+      const bookingData = {
+        serviceId: service.id,
+        serviceName: service.name,
+        start: startTime.toISOString(),
+        end: endTime.toISOString(),
+        customerName: userDetails.name,
+        customerEmail: userDetails.email,
+        customerPhone: userDetails.phone,
+        notes: userDetails.notes,
+        status: 'confirmed' as const,
+        color: service.color
+      };
+
+      // Call the createBooking function from context
+      createBooking(bookingData);
+      
+      // Success feedback and navigation
+      toast.success("Booking confirmed successfully!");
+      
+      // Redirect to success page or dashboard
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error) {
+      console.error("Error confirming booking:", error);
+      toast.error("Failed to create booking. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -590,6 +673,10 @@ const BookingPage: React.FC = () => {
                         Full Name
                       </label>
                       <input
+                        name="name"
+                        value={userDetails.name}
+                        onChange={handleInputChange}
+                        required
                         className="w-full px-3 py-2.5 bg-[#1A1A1E] border border-[#2c2c31] rounded-lg text-white placeholder-[#5c5c5c] focus:outline-none focus:ring-1 focus:ring-[#5657F6] focus:border-[#5657F6] transition-colors duration-200"
                         placeholder="Enter your full name"
                       />
@@ -601,6 +688,10 @@ const BookingPage: React.FC = () => {
                       </label>
                       <input
                         type="email"
+                        name="email"
+                        value={userDetails.email}
+                        onChange={handleInputChange}
+                        required
                         className="w-full px-3 py-2.5 bg-[#1A1A1E] border border-[#2c2c31] rounded-lg text-white placeholder-[#5c5c5c] focus:outline-none focus:ring-1 focus:ring-[#5657F6] focus:border-[#5657F6] transition-colors duration-200"
                         placeholder="Enter your email address"
                       />
@@ -612,6 +703,10 @@ const BookingPage: React.FC = () => {
                       </label>
                       <input
                         type="tel"
+                        name="phone"
+                        value={userDetails.phone}
+                        onChange={handleInputChange}
+                        required
                         className="w-full px-3 py-2.5 bg-[#1A1A1E] border border-[#2c2c31] rounded-lg text-white placeholder-[#5c5c5c] focus:outline-none focus:ring-1 focus:ring-[#5657F6] focus:border-[#5657F6] transition-colors duration-200"
                         placeholder="Enter your phone number"
                       />
@@ -622,6 +717,9 @@ const BookingPage: React.FC = () => {
                         Special Requests
                       </label>
                       <textarea 
+                        name="notes"
+                        value={userDetails.notes}
+                        onChange={handleInputChange}
                         className="w-full px-3 py-2.5 bg-[#1A1A1E] border border-[#2c2c31] rounded-lg text-white placeholder-[#5c5c5c] focus:outline-none focus:ring-1 focus:ring-[#5657F6] focus:border-[#5657F6] transition-colors duration-200 resize-none"
                         rows={4}
                         placeholder="Any special requests or notes for your appointment..."
@@ -660,7 +758,11 @@ const BookingPage: React.FC = () => {
                     >
                       <Button 
                         onClick={handleNextStep}
-                        className="bg-[#5657F6] hover:bg-[#6E6EF7] text-white rounded-md px-4 py-2 text-sm font-medium transition-all duration-200"
+                        disabled={!userDetails.name || !userDetails.email || !userDetails.phone}
+                        className={cn(
+                          "bg-[#5657F6] hover:bg-[#6E6EF7] text-white rounded-md px-4 py-2 text-sm font-medium transition-all duration-200",
+                          (!userDetails.name || !userDetails.email || !userDetails.phone) && "opacity-50 cursor-not-allowed"
+                        )}
                       >
                         Continue
                         <motion.svg 
@@ -734,6 +836,29 @@ const BookingPage: React.FC = () => {
                           </p>
                         </div>
                       </div>
+
+                      <div className="mt-4 border-t border-[#2c2c31] pt-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm text-[#737378] mb-1">Name</p>
+                            <p className="font-medium text-white">{userDetails.name}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-[#737378] mb-1">Phone</p>
+                            <p className="font-medium text-white">{userDetails.phone}</p>
+                          </div>
+                          <div className="col-span-2">
+                            <p className="text-sm text-[#737378] mb-1">Email</p>
+                            <p className="font-medium text-white">{userDetails.email}</p>
+                          </div>
+                          {userDetails.notes && (
+                            <div className="col-span-2">
+                              <p className="text-sm text-[#737378] mb-1">Notes</p>
+                              <p className="font-medium text-white">{userDetails.notes}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
@@ -767,12 +892,17 @@ const BookingPage: React.FC = () => {
                       whileTap={{ scale: 0.98 }}
                     >
                       <Button 
-                        className="bg-[#5657F6] hover:bg-[#6E6EF7] text-white rounded-md px-6 py-2.5 text-sm font-medium transition-all duration-200"
+                        onClick={handleConfirmBooking}
+                        disabled={isSubmitting}
+                        className={cn(
+                          "bg-[#5657F6] hover:bg-[#6E6EF7] text-white rounded-md px-6 py-2.5 text-sm font-medium transition-all duration-200",
+                          isSubmitting && "opacity-50 cursor-not-allowed"
+                        )}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
-                        Confirm Booking
+                        {isSubmitting ? "Processing..." : "Confirm Booking"}
                       </Button>
                     </motion.div>
                   </div>
